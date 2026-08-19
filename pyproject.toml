@@ -1,0 +1,22 @@
+[project]
+name = "controlling-mouse"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+authors = [
+    { name = "Nayab-Gauhar", email = "nayabgauhar8@gmail.com" }
+]
+requires-python = ">=3.12"
+dependencies = [
+    "mediapipe>=1.0.1",
+    "numpy>=2.5.2",
+    "opencv-python>=5.0.0.93",
+    "pyautogui>=0.9.54",
+]
+
+[project.scripts]
+controlling-mouse = "controlling_mouse:main"
+
+[build-system]
+requires = ["uv_build>=0.12.5,<0.13.0"]
+build-backend = "uv_build"
