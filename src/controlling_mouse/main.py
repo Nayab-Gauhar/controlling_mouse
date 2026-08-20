@@ -14,6 +14,10 @@ def get_bounding_box(landmarks):
     max_y = max(landmarks , key = lambda p : p.y).y
     return min_x,max_x,min_y,max_y
 
+#adding the crop function
+def crop(image , bbox):
+    return image[bbox[2]:bbox[3],bbox[0]:bbox[1]]
+
 while True:
     ret,frame = vid.read()
     for faces in find_faces(frame):
@@ -21,7 +25,7 @@ while True:
         x2,y2 = faces.right(),faces.bottom()
         cv2.rectangle(frame,(x1,y1),(x2,y2),(0,255,0),3)
         landmarks = find_landmark(frame,faces).parts()
-        print(landmarks)
+        # print(landmarks)
         for landmark in landmarks:
             cv2.circle(frame,(landmark.x,landmark.y),1,(255,0,0),1)
 
@@ -31,7 +35,12 @@ while True:
         cv2.rectangle(frame,(left_bbox[0],left_bbox[2]),(left_bbox[1],left_bbox[3]),(0,255,0),1)
         cv2.rectangle(frame,(right_bbox[0],right_bbox[2]),(right_bbox[1],right_bbox[3]),(0,255,0),1)
 
+        left_eye_frame = crop(frame,left_bbox)
+        right_eye_frame = crop(frame,right_bbox)
+
     cv2.imshow('frame',frame)
+    cv2.imshow('fjls',left_eye_frame)
+    cv2.imshow('fsf',right_eye_frame)
     if cv2.waitKey(1) & 0XFF == ord('q'):
         break 
 cv2.destroyAllWindows()
