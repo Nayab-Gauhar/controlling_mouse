@@ -21,6 +21,7 @@ while True:
         x2,y2 = faces.right(),faces.bottom()
         cv2.rectangle(frame,(x1,y1),(x2,y2),(0,255,0),3)
         landmarks = find_landmark(frame,faces).parts()
+        print(landmarks)
         for landmark in landmarks:
             cv2.circle(frame,(landmark.x,landmark.y),1,(255,0,0),1)
 
