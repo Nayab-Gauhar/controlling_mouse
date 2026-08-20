@@ -30,15 +30,15 @@ def filter_for_iris(eye_image):
 
 def find_iris_location(iris_image):
     #find the contours 
-    contours , _ = cv2.findContours(iris_image,cv2.RETR_TREE)
+    contours , _ = cv2.findContours(iris_image,cv2.RETR_TREE,cv2.CHAIN_APPROX_SIMPLE)
     #sort in asceneding orders
     contours = sorted(contours , key=cv2.contourArea)
 
     try:
         #Findin the largest one
         moments = cv2.moments(contours[-1])
-        x = moments['m10'] / moments['m00']
-        y = moments['m01'] / moments['m00']
+        x = int(moments['m10'] / moments['m00'])
+        y = int(moments['m01'] / moments['m00'])
     except (IndexError,ZeroDivisionError):
         #no iris found
         return None
@@ -64,11 +64,15 @@ while True:
         right_iris = filter_for_iris(right_eye_frame)
 
         #finding the center of the iris
-        left_iris_centre = find_iris_location(left_iris)
-        right_iris_centre = find_iris_location(right_iris)
+        left_iris_location = find_iris_location(left_iris)
+        right_iris_location = find_iris_location(right_iris)
         #viewing the image boxes
-        cv2.imshow('left_eye',left_iris)
-        cv2.imshow('right_eye',right_iris)
+        # cv2.imshow('left_eye',left_iris)
+        # cv2.imshow('right_eye',right_iris)
+        if left_iris_location is not None:
+            cv2.circle(left_eye_frame,left_iris_location,2,(0,0,255),-1)
+        if right_iris_location is not None:
+            cv2.circle(right_eye_frame,right_iris_location,2,(0,0,255),-1)
 
     cv2.imshow('frame',frame)
     # cv2.imshow('fjls',left_eye_frame)
