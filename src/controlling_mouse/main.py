@@ -90,7 +90,7 @@ while True:
             cv2.circle(right_eye_frame,right_iris_location,2,(0,0,255),-1)
 
         if left_iris_location is not None and right_iris_location is not None:
-            average_offset = ((left_iris_offset[0]+right_iris_offset[0])//2 + (left_iris_offset[1]+right_iris_offset[1])//2)
+            average_offset = (left_iris_offset[0]+right_iris_offset[0])//2 , (left_iris_offset[1]+right_iris_offset[1])//2
             # print(average_offset[0])
             needs_callibaration = (top_left_average_offset is None) or (bottom_right_average_offset is None)
             if needs_callibaration:
