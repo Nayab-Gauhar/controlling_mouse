@@ -27,6 +27,22 @@ def filter_for_iris(eye_image):
     #convert this to binary image and adjust the values for better detection
     iris_image = 255 - cv2.threshold(eye_image,50,255,cv2.THRESH_BINARY)[1]
     return iris_image
+
+def find_iris_location(iris_image):
+    #find the contours 
+    contours , _ = cv2.findContours(iris_image,cv2.RETR_TREE)
+    #sort in asceneding orders
+    contours = sorted(contours , key=cv2.contourArea)
+
+    try:
+        #Findin the largest one
+        moments = cv2.moments(contours[-1])
+        x = moments['m10'] / moments['m00']
+        y = moments['m01'] / moments['m00']
+    except (IndexError,ZeroDivisionError):
+        #no iris found
+        return None
+    return x,y
 while True:
     ret,frame = vid.read()
     left_iris = None
@@ -46,6 +62,11 @@ while True:
 
         left_iris = filter_for_iris(left_eye_frame)
         right_iris = filter_for_iris(right_eye_frame)
+
+        #finding the center of the iris
+        left_iris_centre = find_iris_location(left_iris)
+        right_iris_centre = find_iris_location(right_iris)
+        #viewing the image boxes
         cv2.imshow('left_eye',left_iris)
         cv2.imshow('right_eye',right_iris)
 
