@@ -18,6 +18,16 @@ def get_bounding_box(landmarks):
 def crop(image , bbox):
     return image[bbox[2]:bbox[3],bbox[0]:bbox[1]]
 
+def filter_for_iris(eye_image):
+    #convert to grayscale
+    cv2.cvtColor(eye_image,cv2.COLOR_BGR2GRAY)
+    #blur the frame
+    eye_image = cv2.bilateralFilter(eye_image,10,15,15)
+    #adjust the contrast
+    eye_image = cv2.equalizeHist(eye_image)
+    #convert this to binary image and adjust the values for better detection
+    eye_image = 255 - cv2.threshold(eye_image,50,255,cv2.THRESH_BINARY)
+    return eye_image
 while True:
     ret,frame = vid.read()
     for faces in find_faces(frame):
@@ -38,9 +48,14 @@ while True:
         left_eye_frame = crop(frame,left_bbox)
         right_eye_frame = crop(frame,right_bbox)
 
+        left_iris = filter_for_iris(frame)
+        right_iris = filter_for_iris(frame)
+
     cv2.imshow('frame',frame)
-    cv2.imshow('fjls',left_eye_frame)
-    cv2.imshow('fsf',right_eye_frame)
+    # cv2.imshow('fjls',left_eye_frame)
+    # cv2.imshow('fsf',right_eye_frame)
+    cv2.imshow(left_iris)
+    cv2.imshow(right_iris)
     if cv2.waitKey(1) & 0XFF == ord('q'):
         break 
 cv2.destroyAllWindows()
