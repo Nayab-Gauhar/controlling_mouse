@@ -3,6 +3,8 @@ import cv2
 import dlib
 import pyautogui
 
+pyautogui.FAILSAFE = False
+
 vid = cv2.VideoCapture(0)
 find_faces = dlib.get_frontal_face_detector()
 find_landmark = dlib.shape_predictor('./shape_predictor_68_face_landmarks.dat')
@@ -47,6 +49,7 @@ def find_iris_location(iris_image):
 top_left_average_offset = None
 bottom_right_average_offset = None
 last_time_told = None
+
 while True:
     ret,frame = vid.read()
     left_iris = None
@@ -75,7 +78,7 @@ while True:
         # cv2.imshow('right_eye',right_iris)
         left_eye_center = ((landmarks[36].x + landmarks[39].x) //2 - left_bbox[0]),((landmarks[36].y+landmarks[39].y)//2 - left_bbox[2])
         right_eye_center = ((landmarks[42].x + landmarks[45].x) //2 - right_bbox[0]),((landmarks[42].y+landmarks[45].y)//2 - right_bbox[2])
-        print(f"left-eye-centre = {left_eye_center}  right-eye-centre ={right_eye_center}")
+        # print(f"left-eye-centre = {left_eye_center}  right-eye-centre ={right_eye_center}")
         left_iris_offset = None
         right_iris_offset = None
 
@@ -88,7 +91,7 @@ while True:
 
         if left_iris_location is not None and right_iris_location is not None:
             average_offset = ((left_iris_offset[0]+right_iris_offset[0])//2 + (left_iris_offset[1]+right_iris_offset[1])//2)
-
+            # print(average_offset[0])
             needs_callibaration = (top_left_average_offset is None) or (bottom_right_average_offset is None)
             if needs_callibaration:
                 if last_time_told is None:
@@ -104,7 +107,13 @@ while True:
                         bottom_right_average_offset = average_offset
 
                     last_time_told = None
-
+            else:
+                min_x,min_y = top_left_average_offset
+                max_x,max_y = bottom_right_average_offset
+            
+                pyautogui.moveTo(
+                    1920*(average_offset[0]-min_x) /(max_x-min_x) ,1080*(average_offset[1]-min_y) /(max_y-min_y)
+                )
     cv2.imshow('frame',frame)
     # cv2.imshow('fjls',left_eye_frame)
     # cv2.imshow('fsf',right_eye_frame)
