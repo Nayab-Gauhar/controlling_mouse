@@ -32,14 +32,9 @@ while True:
     left_iris = None
     right_iris = None
     for faces in find_faces(frame):
-        x1,y1 = faces.left(),faces.top()
-        x2,y2 = faces.right(),faces.bottom()
-        cv2.rectangle(frame,(x1,y1),(x2,y2),(0,255,0),3)
+
         landmarks = find_landmark(frame,faces).parts()
         # print(landmarks)
-        for landmark in landmarks:
-            cv2.circle(frame,(landmark.x,landmark.y),1,(255,0,0),1)
-
         left_bbox = get_bounding_box(landmarks[36:42])
         right_bbox = get_bounding_box(landmarks[42:48])
 
@@ -51,12 +46,12 @@ while True:
 
         left_iris = filter_for_iris(left_eye_frame)
         right_iris = filter_for_iris(right_eye_frame)
+        cv2.imshow('left_eye',left_iris)
+        cv2.imshow('right_eye',right_iris)
 
     cv2.imshow('frame',frame)
     # cv2.imshow('fjls',left_eye_frame)
     # cv2.imshow('fsf',right_eye_frame)
-    cv2.imshow('sdads',left_iris)
-    cv2.imshow('asdadsads',right_iris)
     if cv2.waitKey(1) & 0XFF == ord('q'):
         break 
 cv2.destroyAllWindows()
